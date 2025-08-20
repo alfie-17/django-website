@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+      {% for post in posts %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-header text-center bg-white border-0">
+              <img src="{{ post.author.profile.image.url }}" class="rounded-circle" width="60" height="60" alt="{{ post.author.username }}">
+              <p class="mt-2 mb-0"><strong>{{ post.author.username }}</strong></p>
+            </div>
+            {% if post.image %}
+              <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ post.title }}</h5>
+              <p class="card-text">{{ post.content|truncatewords:25 }}</p>
+              <a href="{% url 'post_detail' post.slug %}" class="btn btn-outline-primary">Read More</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+
+<nav>
+    <ul class="pagination">
+        {% if posts.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a></li>
+        {% endif %}
+        <li class="page-item active"><span class="page-link">{{ posts.number }}</span></li>
+        {% if posts.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Next</a></li>
+        {% endif %}
+    </ul>
+</nav>
+</div>
+{% endblock %}

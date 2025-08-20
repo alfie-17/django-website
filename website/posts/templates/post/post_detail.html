@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card shadow mb-4">
+        <div class="card-header text-center bg-white border-0">
+          <img src="{{ post.author.profile.image.url }}" class="rounded-circle" width="70" height="70"
+            alt="{{ post.author.username }}">
+          <p class="mt-2 mb-0"><strong>{{ post.author.username }}</strong></p>
+          <small class="text-muted">Published on {{ post.created_at|date:"F j, Y" }}</small>
+        </div>
+        {% if post.image %}
+        <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">
+        {% endif %}
+        <div class="card-body">
+          <h2 class="card-title">{{ post.title }}</h2>
+          <p class="card-text">{{ post.content|linebreaks }}</p>
+        </div>
+      </div>
+
+      {% if post.author == user%}
+      <a href="{% url 'edit_post' post.slug %}" class="btn btn-outline-warning">Edit</a>
+      <a href="{% url 'delete_post' post.slug %}" class="btn btn-outline-danger">Delete</a>
+      {% endif %}
+      <!-- 💬 Comments Section -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5>Comments ({{ comments.count }})</h5>
+        </div>
+        <div class="card-body">
+          {% for comment in comments %}
+          <div class="mb-3">
+            <div class="d-flex align-items-center mb-1">
+              <strong>{{ comment.author.username }}</strong>
+              <small class="text-muted ms-2">{{ comment.created_at|date:"M d, Y H:i" }}</small>
+            </div>
+            <p class="mb-0">{{ comment.text|linebreaks }}</p>
+          </div>
+          <hr>
+          {% empty %}
+          <p>No comments yet. Be the first to share your thoughts!</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- 📝 Comment Form -->
+      <div class="card">
+        <div class="card-header">
+          <h5>Leave a Comment</h5>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
